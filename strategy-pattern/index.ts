@@ -26,14 +26,16 @@ abstract class Person {
   have the performTravel method which is called in this method
   */
   travel() {
-    this.printPerson();
-    this.travelManner.performTravel();
-    console.log("----------");
-  }
-
-  //   This method is only used to display the person and their class type
-  printPerson() {
+    // For display only
     console.log(`${this.firstName} ${this.lastName}`);
+
+    // -----
+    // Main use of Strategy pattern here
+    this.travelManner.performTravel();
+    // -----
+
+    // For display only
+    console.log("----------");
   }
 }
 
