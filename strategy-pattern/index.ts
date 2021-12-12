@@ -19,7 +19,7 @@ abstract class Person {
 
   /*
   This is the main purpose for strategy pattern,
-  travel method can be called on any derived class
+  the travel method can be called on any derived class
   and the implementation of the travel algorithm is 
   abstracted away. The algorithms are grouped together
   by the use of the interface ITravelManner which requires that the algorithm
@@ -75,7 +75,7 @@ class TravelByPlane implements ITravelManner {
   }
 }
 
-function main() {
+function mainStrategy() {
   // Define characters
   const kevin = new RichPerson("Kevin", "Drama", new TravelByPlane());
   const george = new PoorPerson("George", "Federal", new TravelByCar());
@@ -90,4 +90,4 @@ function main() {
   beth.travel();
 }
 
-main();
+mainStrategy();

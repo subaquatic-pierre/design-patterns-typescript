@@ -1,9 +1,11 @@
+// Interface only used to define weather object
 interface IWeatherObject {
   temp: number;
   humidity: number;
   pressure: number;
 }
 
+// Abstract class simulating interface to program displays to
 abstract class IWeatherDisplay {
   weatherData: IWeatherData;
 
@@ -49,16 +51,19 @@ class WeatherData extends IWeatherData {
     this.stateChanged();
   }
 
+  // Listeners are notified of changes here
   notifyListeners(): void {
     this.subscriberList.forEach((display) => {
       display.updateState();
     });
   }
 
+  // Any time state is changed this method is called
   stateChanged(): void {
     this.notifyListeners();
   }
 
+  // Add or remove subscribers with next 2 methods
   addSubscriber(subscriber: IWeatherDisplay): void {
     this.subscriberList.push(subscriber);
   }
@@ -68,10 +73,10 @@ class WeatherData extends IWeatherData {
     this.subscriberList.splice(elIndex, 1);
   }
 
+  // Simple getter methods for listeners to pull data they need
   getHumidity(): number {
     return this.humidity;
   }
-
   getTemp(): number {
     return this.temp;
   }
@@ -79,7 +84,6 @@ class WeatherData extends IWeatherData {
   getPressure(): number {
     return this.pressure;
   }
-
   getWeather(): IWeatherObject {
     return {
       temp: this.temp,
@@ -105,11 +109,11 @@ class CurrentWeatherDisplay extends IWeatherDisplay {
 
   updateDisplay() {
     const displayData: string = `
-        -----
-        Current Temp: ${this.currentTemp} C
-        Current Humidity: ${this.currentHumidity}%
-        Current Pressure: ${this.currentPressure}hpa
-        -----
+    -----
+    Current Temp: ${this.currentTemp} C
+    Current Humidity: ${this.currentHumidity}%
+    Current Pressure: ${this.currentPressure}hpa
+    -----
     `;
     console.log(displayData);
   }
@@ -135,17 +139,17 @@ class AverageWeatherDisplay extends IWeatherDisplay {
 
   updateDisplay() {
     const displayData: string = `
-        -----
-        Average Temp: ${this.getAverage(this.tempHistory)} C
-        Average Humidity: ${this.getAverage(this.humidityHistory)}%
-        Average Pressure: ${this.getAverage(this.pressureHistory)}hpa
-        -----
+    -----
+    Average Temp: ${this.getAverage(this.tempHistory)} C
+    Average Humidity: ${this.getAverage(this.humidityHistory)}%
+    Average Pressure: ${this.getAverage(this.pressureHistory)}hpa
+    -----
       `;
     console.log(displayData);
   }
 }
 
-function main() {
+function mainObserver() {
   const weatherData = new WeatherData();
   const currentWeatherDisplay = new CurrentWeatherDisplay(weatherData);
   const averageWeatherDisplay = new AverageWeatherDisplay(weatherData);
@@ -154,11 +158,13 @@ function main() {
   weatherData.addSubscriber(averageWeatherDisplay);
 
   weatherData.setWeather(30, 90, 1090);
-
   weatherData.setWeather(24, 70, 700);
 
   weatherData.removeSubscriber(currentWeatherDisplay);
   weatherData.setWeather(16, 42, 900);
+
+  weatherData.addSubscriber(currentWeatherDisplay);
+  weatherData.setWeather(10, 67, 1230);
 }
 
-main();
+mainObserver();
