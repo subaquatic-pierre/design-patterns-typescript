@@ -1,4 +1,4 @@
-abstract class BaseDesktopComponent {
+class BaseComponent {
   itemName: string;
   price: number;
 
@@ -7,71 +7,6 @@ abstract class BaseDesktopComponent {
     this.price = price;
   }
 
-  abstract getPrice(): number;
-
-  abstract getDescription(): string;
-
-  abstract printProduct(): void;
-}
-
-abstract class IComponentDecorator extends BaseDesktopComponent {
-  baseComponent: BaseDesktopComponent;
-
-  constructor(
-    itemName: string,
-    price: number,
-    baseComponent: BaseDesktopComponent
-  ) {
-    super(itemName, price);
-    this.baseComponent = baseComponent;
-  }
-
-  getPrice(): number {
-    return this.baseComponent.getPrice() + this.price;
-  }
-
-  getDescription(): string {
-    return `${this.baseComponent.getDescription()}, ${this.itemName}($${
-      this.price
-    })`;
-  }
-
-  printProduct(): void {
-    console.log(`${this.getDescription()}: $${this.getPrice()}`);
-  }
-}
-
-class WithKeyboard extends IComponentDecorator {
-  constructor(
-    baseComponent: BaseDesktopComponent,
-    itemName: string = "Keyboard",
-    price: number = 20
-  ) {
-    super(itemName, price, baseComponent);
-  }
-}
-
-class WithMouse extends IComponentDecorator {
-  constructor(
-    baseComponent: BaseDesktopComponent,
-    itemName: string = "Mouse",
-    price: number = 10
-  ) {
-    super(itemName, price, baseComponent);
-  }
-}
-
-class WithMonitor extends IComponentDecorator {
-  constructor(
-    baseComponent: BaseDesktopComponent,
-    itemName: string = "LCD Monitor",
-    price: number = 35
-  ) {
-    super(itemName, price, baseComponent);
-  }
-}
-
-class Desktop extends BaseDesktopComponent {
   getPrice(): number {
     return this.price;
   }
@@ -85,11 +20,38 @@ class Desktop extends BaseDesktopComponent {
   }
 }
 
-const simpleDesktop = new Desktop("Intel Pentium", 100);
-const desktopKeyboard = new WithKeyboard(simpleDesktop);
-const desktopKeyboardMouse = new WithMouse(desktopKeyboard);
-const desktopMonitor = new WithMonitor(simpleDesktop);
-const desktopKeyboardMouseMonitor = new WithMonitor(desktopKeyboardMouse);
+class ComponentDecorator extends BaseComponent {
+  baseComponent: BaseComponent;
+
+  constructor(itemName: string, price: number, baseComponent: BaseComponent) {
+    super(itemName, price);
+    this.baseComponent = baseComponent;
+  }
+
+  getPrice(): number {
+    return this.baseComponent.getPrice() + this.price;
+  }
+
+  getDescription(): string {
+    return `${this.baseComponent.getDescription()}, ${this.itemName}($${
+      this.price
+    })`;
+  }
+}
+
+const simpleDesktop = new BaseComponent("Intel Pentium", 100);
+const desktopKeyboard = new ComponentDecorator("Keyboard", 20, simpleDesktop);
+const desktopKeyboardMouse = new ComponentDecorator(
+  "Mouse",
+  10,
+  desktopKeyboard
+);
+const desktopMonitor = new ComponentDecorator("LCD Monitor", 65, simpleDesktop);
+const desktopKeyboardMouseMonitor = new ComponentDecorator(
+  "LCD Monitor",
+  65,
+  desktopKeyboardMouse
+);
 
 simpleDesktop.printProduct();
 desktopKeyboard.printProduct();
